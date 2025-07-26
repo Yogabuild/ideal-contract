@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "ideal-contract-backend": {
+      "main": "src/ideal-contract-backend/main.mo",
+      "type": "motoko"
+    },
+    "ideal-contract-frontend": {
+      "dependencies": [
+        "ideal-contract-backend"
+      ],
+      "source": [
+        "src/ideal-contract-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "ideal-contract-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
