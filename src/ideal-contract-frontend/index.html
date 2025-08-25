@@ -1,20 +1,1414 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IC Hello Starter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contract Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Navigation Styles */
+        .navigation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* View Container */
+        .view-container {
+            padding: 40px;
+            min-height: 400px;
+        }
+
+        /* Individual Views */
+        .view {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .view h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .view p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Smart Contract Styles */
+        .contract-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .contract-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .party-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .party-block h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+
+        .article-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .article-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .article-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .condition-block {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .condition-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .appendix-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .signature-box {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f0f4ff;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-draft {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-pending {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .status-active {
+            background: #20c997;
+            color: white;
+        }
+
+        .status-deployed {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .status-executed {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .status-ready {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Contracts List Styles */
+        .contracts-list {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .contract-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        .contract-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .contract-item:last-child {
+            border-bottom: none;
+        }
+
+        .contract-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .contract-info p {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .contract-status {
+            text-align: right;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .pagination-btn {
+            padding: 10px 16px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f8f9fa;
+            color: #999;
+        }
+
+        .pagination-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .page-number:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-number.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card Styles */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        /* Settings Toggle */
+        .toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: #667eea;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="browser-warning">
-    ⚠️ If this page appears broken, try reloading. If the problem persists, try switching browsers; Chrome or
-    Firefox are recommended.
-  </div>
-  <div id="root"></div>
-  <script type="module" src="/src/main.js"></script>
-</body>
+    <div class="container">
+        <!-- Navigation Menu -->
+        <nav class="navigation">
+            <button class="nav-btn active" onclick="showView('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="showView('smart-contract')">📝 Compose IDealContract</button>
+            <button class="nav-btn" onclick="showView('profile')">Profile</button>
+            <button class="nav-btn" onclick="showView('stats')">Stats</button>
+            <button class="nav-btn" onclick="showView('settings')">Settings</button>
+            <button class="nav-btn" onclick="showView('contact')">Support</button>
+        </nav>
 
+        <!-- View Container -->
+        <div class="view-container">
+            <!-- Dashboard View -->
+            <div id="dashboard" class="view active">
+                <h2>Smart Contract Management System 🏠</h2>
+                <p>Your decentralized platform for creating, managing, and deploying smart contracts on the Internet Computer Protocol.</p>
+
+                <!-- Recent Contracts List -->
+                <div class="contract-section" style="margin-top: 40px;">
+                    <h3>📄 Your Contracts <span style="font-size: 14px; color: #666; font-weight: normal;">(20 total)</span></h3>
+                    <div class="contracts-list" id="contracts-list">
+                        <!-- Contracts will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Pagination Controls -->
+                    <div class="pagination-container">
+                        <button class="pagination-btn" id="prev-btn" onclick="changePage(-1)">‹ Previous</button>
+                        <div class="pagination-numbers" id="pagination-numbers">
+                            <!-- Page numbers will be populated by JavaScript -->
+                        </div>
+                        <button class="pagination-btn" id="next-btn" onclick="changePage(1)">Next ›</button>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn-secondary" onclick="showView('smart-contract')">+ Create New Contract</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Contract Composer View -->
+            <div id="smart-contract" class="view">
+                <h2>🔐 IDealContract Smart Contract Composer 
+                    <span class="status-badge status-draft">DRAFT</span>
+                </h2>
+                <p style="margin-bottom: 30px; padding: 15px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 10px; border-left: 4px solid #667eea;">
+                    Generate decentralized and algorithmic smart contracts for tokenized and programmable businesses. 
+                    Code is law and creates trust between parties. Once validated, this contract will be deployed as an ICP Canister dAPP.
+                </p>
+
+                <!-- Contract Summary Section -->
+                <div class="contract-section">
+                    <h3>📋 CONTRACT SUMMARY</h3>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label for="contract-title">Contract Title *</label>
+                            <input type="text" id="contract-title" placeholder="e.g., Service Agreement">
+                        </div>
+                        <div class="form-group">
+                            <label for="contract-date">Effective Date *</label>
+                            <input type="date" id="contract-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="contract-version">Version</label>
+                            <input type="text" id="contract-version" value="v1.0.0">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="contract-category">Category *</label>
+                            <select id="contract-category">
+                                <option value="">Select Category</option>
+                                <option>Service Agreement</option>
+                                <option>Partnership</option>
+                                <option>Employment</option>
+                                <option>Licensing</option>
+                                <option>Supply Chain</option>
+                                <option>Real Estate</option>
+                                <option>Investment</option>
+                                <option>Token Sale</option>
+                                <option>DAO Governance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jurisdiction">Jurisdiction *</label>
+                            <select id="jurisdiction">
+                                <option value="">Select Jurisdiction</option>
+                                <option>International</option>
+                                <option>United States</option>
+                                <option>European Union</option>
+                                <option>United Kingdom</option>
+                                <option>Canada</option>
+                                <option>Switzerland</option>
+                                <option>Singapore</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-subject">Subject Matter *</label>
+                        <input type="text" id="contract-subject" placeholder="Brief description of contract purpose">
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-preamble">Preamble</label>
+                        <textarea id="contract-preamble" rows="3" placeholder="Introductory statement explaining the purpose and intent..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Parties Section -->
+                <div class="contract-section">
+                    <h3>👥 CONTRACTING PARTIES</h3>
+                    <div id="parties-container">
+                        <!-- Party 1 -->
+                        <div class="party-block">
+                            <h4>Party 1 (Contractor) <button class="btn-danger" style="margin-left: 10px; padding: 5px 10px; font-size: 12px;" onclick="removeParty(this)">Remove</button></h4>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Full Name / Company *</label>
+                                    <input type="text" class="party-name" placeholder="John DOE or Company Inc.">
+                                </div>
+                                <div class="form-group">
+                                    <label>Alias *</label>
+                                    <input type="text" class="party-alias" placeholder="e.g., 'Contractor', 'Party A'">
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Full Address *</label>
+                                    <input type="text" class="party-address" placeholder="123 Main St, City, State, ZIP, Country">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" class="party-email" placeholder="john@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Wallet Address (Optional)</label>
+                                <input type="text" class="party-wallet" placeholder="0x...">
+                            </div>
+                        </div>
+
+                        <!-- Party 2 -->
+                        <div class="party-block">
+                            <h4>Party 2 (Client/Partner) <button class="btn-danger" style="margin-left: 10px; padding: 5px 10px; font-size: 12px;" onclick="removeParty(this)">Remove</button></h4>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Full Name / Company *</label>
+                                    <input type="text" class="party-name" placeholder="Jane SMITH or Partner Corp.">
+                                </div>
+                                <div class="form-group">
+                                    <label>Alias *</label>
+                                    <input type="text" class="party-alias" placeholder="e.g., 'Client', 'Party B'">
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Full Address *</label>
+                                    <input type="text" class="party-address" placeholder="456 Oak Ave, City, State, ZIP, Country">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" class="party-email" placeholder="jane@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Wallet Address (Optional)</label>
+                                <input type="text" class="party-wallet" placeholder="0x...">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" onclick="addParty()">+ Add Another Party</button>
+                    
+                    <!-- AI Template Generation -->
+                    <div style="text-align: center; margin: 40px 0; padding: 30px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 15px; border: 2px dashed #667eea;">
+                        <h4 style="color: #667eea; margin-bottom: 15px;">🤖 Ready to Generate Contract Articles?</h4>
+                        <p style="color: #666; margin-bottom: 20px; font-size: 16px;">Based on your contract summary and parties, AI will generate appropriate articles and clauses.</p>
+                        <button class="btn-primary" onclick="generateAITemplate()" style="font-size: 18px; padding: 15px 40px;">🤖 Generate AI Template</button>
+                    </div>
+                    
+                    <!-- Custom Articles Option -->
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn-secondary" onclick="showCustomArticles()" style="font-size: 16px; padding: 12px 30px;">📝 Create Custom Articles</button>
+                    </div>
+                </div>
+
+                <!-- Contract Body - Articles (Hidden by default) -->
+                <div class="contract-section" id="articles-section" style="display: none;">
+                    <h3>📄 CONTRACT ARTICLES</h3>
+                    <div id="articles-container">
+                        <!-- Articles will be populated dynamically -->
+                    </div>
+                    <button class="btn-secondary" onclick="addArticle()">+ Add Article</button>
+                </div>
+
+                <!-- Appendices Section -->
+                <div class="contract-section">
+                    <h3>📎 APPENDICES</h3>
+                    <div id="appendices-container">
+                        <div class="appendix-item">
+                            <input type="file" style="flex: 1;" accept=".pdf,.doc,.docx,.rtf,.odt,.txt,.xlsx,.jpg,.jpeg,.png,.tiff,.zip">
+                            <button class="btn-danger" onclick="removeAppendix(this)">Remove</button>
+                        </div>
+                    </div>
+                    <p style="font-size: 14px; color: #666; margin: 15px 0; padding: 10px; background: #f0f4ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <strong>📄 Supported file types:</strong> PDF, Word documents (.doc, .docx), Rich Text (.rtf), OpenDocument (.odt), Plain Text (.txt), Excel (.xlsx), Images (.jpg, .png, .tiff), and Archives (.zip)
+                    </p>
+                    <button class="btn-secondary" onclick="addAppendix()">+ Add Document</button>
+                </div>
+
+                <!-- Agreement Section -->
+                <div class="contract-section">
+                    <h3>✍️ AGREEMENT & SIGNATURES</h3>
+                    <div id="signature-boxes" class="grid-2">
+                        <!-- Signature boxes will be generated dynamically -->
+                    </div>
+                    <div class="grid-3" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Contract Version</label>
+                            <input type="text" value="1.0.0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Copies</label>
+                            <input type="number" value="2" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Transacting Asset</label>
+                            <select>
+                                <option>ICP (Internet Computer)</option>
+                                <option>ckUSDC (Chain-key USDC)</option>
+                                <option>ckBTC (Chain-key Bitcoin)</option>
+                                <option>ckETH (Chain-key Ethereum)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn-secondary" onclick="saveAsDraft()">💾 Save as Draft</button>
+                    <button class="btn-primary" onclick="validateContract()">✅ Validate Contract</button>
+                    <button class="btn-primary btn-disabled" onclick="alert('🚧 Deploy to ICP functionality coming soon!')" style="background: #ccc; color: #666; cursor: not-allowed;" disabled>🚀 Deploy to ICP</button>
+                </div>
+            </div>
+
+            <!-- Profile View -->
+            <div id="profile" class="view">
+                <h2>My Profile 👤</h2>
+                <p>Manage your personal information and blockchain identity.</p>
+                <form onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="wallet">Wallet Address</label>
+                        <input type="text" id="wallet" placeholder="0x...">
+                    </div>
+                    <button type="submit" class="btn-primary">Save Profile</button>
+                </form>
+            </div>
+
+            <!-- Stats View -->
+            <div id="stats" class="view">
+                <h2>Analytics & Statistics 📊</h2>
+                <p>Monitor your smart contracts performance and blockchain activities.</p>
+                
+                <!-- Key Metrics Cards -->
+                <div class="cards">
+                    <div class="card">
+                        <h3>Active Contracts</h3>
+                        <p>7</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pending Review</h3>
+                        <p>3</p>
+                    </div>
+                    <div class="card">
+                        <h3>Deployed</h3>
+                        <p>12</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Value Locked</h3>
+                        <p>$2.4M</p>
+                    </div>
+                    <div class="card">
+                        <h3>Transactions</h3>
+                        <p>1,892</p>
+                    </div>
+                    <div class="card">
+                        <h3>Success Rate</h3>
+                        <p>99.3%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settings" class="view">
+                <h2>Settings ⚙️</h2>
+                <p>Configure your platform preferences.</p>
+                <div style="background: #f8f9fa; border-radius: 10px; padding: 20px;">
+                    <div class="setting-item">
+                        <span>Smart Contract Notifications</span>
+                        <div class="toggle active" onclick="toggleSetting(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>Auto-save Drafts</span>
+                        <div class="toggle active" onclick="toggleSetting(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>Default Contract Language</span>
+                        <select id="default-language" style="width: 150px; padding: 8px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="it">Italian</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="ru">Russian</option>
+                            <option value="zh">Chinese</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="ar">Arabic</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span>Default Jurisdiction</span>
+                        <select id="default-jurisdiction" style="width: 180px; padding: 8px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <option value="">Select Jurisdiction</option>
+                            <option value="international">International</option>
+                            <option value="united-states">United States</option>
+                            <option value="european-union">European Union</option>
+                            <option value="united-kingdom">United Kingdom</option>
+                            <option value="canada">Canada</option>
+                            <option value="switzerland">Switzerland</option>
+                            <option value="singapore">Singapore</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support View -->
+            <div id="contact" class="view">
+                <h2>Support 🎫</h2>
+                <p>Create a support ticket for help with your smart contracts and platform issues.</p>
+                <form onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="contact-name">Your Name</label>
+                        <input type="text" id="contact-name" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Your Email</label>
+                        <input type="email" id="contact-email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="issue-type">Issue Type</label>
+                        <select id="issue-type">
+                            <option>Smart Contract Bug</option>
+                            <option>Deployment Issue</option>
+                            <option>Gas Optimization</option>
+                            <option>General Question</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" placeholder="Describe your issue..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Create Support Ticket</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main navigation function
+        function showView(viewId) {
+            // Redirect home to dashboard
+            if (viewId === 'home') {
+                viewId = 'dashboard';
+            }
+            
+            // Hide all views
+            const allViews = document.querySelectorAll('.view');
+            allViews.forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Remove active class from all navigation buttons
+            const allButtons = document.querySelectorAll('.nav-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show the selected view
+            const selectedView = document.getElementById(viewId);
+            if (selectedView) {
+                selectedView.classList.add('active');
+            }
+
+            // Add active class to the correct button
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(viewId)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            console.log(`Switched to view: ${viewId}`);
+        }
+
+        // Smart Contract Functions
+        let articleCount = 0;
+        let partyCount = 2;
+
+        // Contracts data and pagination
+        let currentPage = 1;
+        const contractsPerPage = 6;
+        const contractsData = [
+            { title: "Digital Marketing Service Agreement", client: "TechCorp Solutions", date: "Aug 20, 2025", status: "active" },
+            { title: "Software Development Partnership", client: "StartupXYZ", date: "Aug 18, 2025", status: "deployed" },
+            { title: "NFT Collection License Agreement", client: "ArtistDAO", date: "Aug 15, 2025", status: "executed" },
+            { title: "Supply Chain Management Contract", client: "GlobalTrade Inc.", date: "Aug 12, 2025", status: "pending" },
+            { title: "Real Estate Investment Agreement", client: "PropTech Ventures", date: "Aug 10, 2025", status: "draft" },
+            { title: "Token Sale Agreement", client: "CryptoStartup", date: "Aug 8, 2025", status: "deployed" },
+            { title: "Cloud Infrastructure Service Contract", client: "DataCloud Corp", date: "Aug 5, 2025", status: "active" },
+            { title: "Intellectual Property Licensing", client: "Innovation Labs", date: "Aug 3, 2025", status: "executed" },
+            { title: "E-commerce Platform Development", client: "ShopTech Inc", date: "Jul 30, 2025", status: "deployed" },
+            { title: "AI Consulting Services Agreement", client: "FutureTech AI", date: "Jul 28, 2025", status: "active" },
+            { title: "Mobile App Development Contract", client: "AppVentures", date: "Jul 25, 2025", status: "pending" },
+            { title: "Blockchain Integration Services", client: "CryptoSolutions", date: "Jul 22, 2025", status: "deployed" },
+            { title: "Data Analytics Partnership", client: "BigData Corp", date: "Jul 20, 2025", status: "active" },
+            { title: "Cybersecurity Audit Agreement", client: "SecureNet Ltd", date: "Jul 18, 2025", status: "executed" },
+            { title: "Video Production Services", client: "MediaWorks Studio", date: "Jul 15, 2025", status: "draft" },
+            { title: "SaaS Subscription Management", client: "CloudFirst Inc", date: "Jul 12, 2025", status: "active" },
+            { title: "Financial Advisory Services", client: "WealthTech Partners", date: "Jul 10, 2025", status: "pending" },
+            { title: "Legal Documentation Platform", client: "LegalTech Solutions", date: "Jul 8, 2025", status: "deployed" },
+            { title: "Healthcare Management System", client: "MedTech Innovations", date: "Jul 5, 2025", status: "active" },
+            { title: "Green Energy Investment Contract", client: "EcoInvest Group", date: "Jul 2, 2025", status: "executed" }
+        ];
+
+        function renderContracts() {
+            const startIndex = (currentPage - 1) * contractsPerPage;
+            const endIndex = startIndex + contractsPerPage;
+            const pageContracts = contractsData.slice(startIndex, endIndex);
+
+            const contractsList = document.getElementById('contracts-list');
+            contractsList.innerHTML = '';
+
+            pageContracts.forEach(contract => {
+                const contractItem = document.createElement('div');
+                contractItem.className = 'contract-item';
+                contractItem.innerHTML = `
+                    <div class="contract-info">
+                        <h4>${contract.title}</h4>
+                        <p>Client: ${contract.client} | Created: ${contract.date}</p>
+                    </div>
+                    <div class="contract-status">
+                        <span class="status-badge status-${contract.status}">${contract.status.charAt(0).toUpperCase() + contract.status.slice(1)}</span>
+                    </div>
+                `;
+                contractsList.appendChild(contractItem);
+            });
+
+            updatePaginationControls();
+        }
+
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(contractsData.length / contractsPerPage);
+            
+            // Update previous/next buttons
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage === totalPages;
+
+            // Update page numbers
+            const paginationNumbers = document.getElementById('pagination-numbers');
+            paginationNumbers.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('div');
+                pageButton.className = `page-number ${i === currentPage ? 'active' : ''}`;
+                pageButton.textContent = i;
+                pageButton.onclick = () => goToPage(i);
+                paginationNumbers.appendChild(pageButton);
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(contractsData.length / contractsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderContracts();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderContracts();
+        }
+
+        function addArticle() {
+            articleCount++;
+            const container = document.getElementById('articles-container');
+            const articleDiv = document.createElement('div');
+            articleDiv.className = 'article-item';
+            articleDiv.innerHTML = `
+                <div class="article-header">
+                    <span class="article-number">Article ${articleCount}</span>
+                    <button class="btn-danger" onclick="removeArticle(this)">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label>Article Title</label>
+                    <input type="text" class="article-title" placeholder="Enter article title">
+                </div>
+                <div class="form-group">
+                    <label>Article Description</label>
+                    <textarea class="article-description" rows="4" placeholder="Detailed description of this article..."></textarea>
+                </div>
+                <div class="condition-block">
+                    <h5 style="margin-bottom: 10px;">Smart Contract Conditions</h5>
+                    <div>
+                        <span class="condition-tag">IF</span>
+                        <input type="text" style="width: calc(100% - 60px); margin-bottom: 10px;" placeholder="Condition">
+                    </div>
+                    <div>
+                        <span class="condition-tag">THEN</span>
+                        <input type="text" style="width: calc(100% - 60px); margin-bottom: 10px;" placeholder="Action">
+                    </div>
+                    <div>
+                        <span class="condition-tag">ELSE</span>
+                        <input type="text" style="width: calc(100% - 60px);" placeholder="Alternative action">
+                    </div>
+                </div>
+            `;
+            container.appendChild(articleDiv);
+            updateArticleNumbers();
+        }
+
+        function removeArticle(button) {
+            if (confirm('Are you sure you want to remove this article?')) {
+                button.closest('.article-item').remove();
+                updateArticleNumbers();
+            }
+        }
+
+        function updateArticleNumbers() {
+            const articles = document.querySelectorAll('.article-item');
+            articles.forEach((article, index) => {
+                const numberSpan = article.querySelector('.article-number');
+                if (numberSpan) {
+                    numberSpan.textContent = `Article ${index + 1}`;
+                }
+            });
+            articleCount = articles.length;
+        }
+
+        function addParty() {
+            partyCount++;
+            const container = document.getElementById('parties-container');
+            const partyDiv = document.createElement('div');
+            partyDiv.className = 'party-block';
+            partyDiv.innerHTML = `
+                <h4>Party ${partyCount} <button class="btn-danger" style="margin-left: 10px; padding: 5px 10px; font-size: 12px;" onclick="removeParty(this)">Remove</button></h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Full Name / Company *</label>
+                        <input type="text" class="party-name" placeholder="Name or Company">
+                    </div>
+                    <div class="form-group">
+                        <label>Alias *</label>
+                        <input type="text" class="party-alias" placeholder="e.g., 'Party ${String.fromCharCode(65 + partyCount - 1)}'">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Full Address *</label>
+                        <input type="text" class="party-address" placeholder="Full address">
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" class="party-email" placeholder="email@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Wallet Address (Optional)</label>
+                    <input type="text" class="party-wallet" placeholder="0x...">
+                </div>
+            `;
+            container.appendChild(partyDiv);
+            updateSignatureBoxes();
+        }
+
+        function removeParty(button) {
+            if (document.querySelectorAll('.party-block').length <= 2) {
+                alert('⚠️ A contract must have at least 2 parties.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to remove this party?')) {
+                button.closest('.party-block').remove();
+                updatePartyNumbers();
+                updateSignatureBoxes();
+            }
+        }
+
+        function updatePartyNumbers() {
+            const parties = document.querySelectorAll('.party-block');
+            parties.forEach((party, index) => {
+                const headerElement = party.querySelector('h4');
+                if (headerElement) {
+                    const removeButton = headerElement.querySelector('.btn-danger');
+                    const removeButtonHTML = removeButton ? removeButton.outerHTML : '';
+                    headerElement.innerHTML = `Party ${index + 1} ${removeButtonHTML}`;
+                }
+            });
+            partyCount = parties.length;
+        }
+
+        function updateSignatureBoxes() {
+            const parties = document.querySelectorAll('.party-block');
+            const signatureContainer = document.getElementById('signature-boxes');
+            
+            // Clear existing signature boxes
+            signatureContainer.innerHTML = '';
+            
+            // Update grid class based on number of parties
+            if (parties.length <= 2) {
+                signatureContainer.className = 'grid-2';
+            } else if (parties.length <= 3) {
+                signatureContainer.className = 'grid-3';
+            } else {
+                signatureContainer.className = 'grid-2'; // Fall back to 2 columns for 4+ parties
+            }
+            
+            // Create signature box for each party
+            parties.forEach((party, index) => {
+                const partyName = party.querySelector('.party-name')?.value || `Party ${index + 1}`;
+                const partyAlias = party.querySelector('.party-alias')?.value || `Party ${index + 1}`;
+                
+                const signatureBox = document.createElement('div');
+                signatureBox.className = 'signature-box';
+                signatureBox.innerHTML = `
+                    <h4>${partyAlias} Signature</h4>
+                    <p style="margin: 20px 0; color: #999;">Digital signature pending</p>
+                    <input type="date" placeholder="Signature Date">
+                `;
+                signatureContainer.appendChild(signatureBox);
+            });
+        }
+
+        function addAppendix() {
+            const container = document.getElementById('appendices-container');
+            const appendixDiv = document.createElement('div');
+            appendixDiv.className = 'appendix-item';
+            appendixDiv.innerHTML = `
+                <input type="file" style="flex: 1;" accept=".pdf,.doc,.docx,.rtf,.odt,.txt,.xlsx,.jpg,.jpeg,.png,.tiff,.zip">
+                <button class="btn-danger" onclick="removeAppendix(this)">Remove</button>
+            `;
+            container.appendChild(appendixDiv);
+        }
+
+        function removeAppendix(button) {
+            button.closest('.appendix-item').remove();
+        }
+
+        function saveAsDraft() {
+            const contractData = collectContractData();
+            localStorage.setItem('contractDraft', JSON.stringify(contractData));
+            alert('✅ Contract saved as draft successfully!');
+            console.log('Contract Draft Saved:', contractData);
+        }
+
+        function generateAITemplate() {
+            const category = document.getElementById('contract-category').value;
+            const jurisdiction = document.getElementById('jurisdiction').value;
+            
+            if (!category || !jurisdiction) {
+                alert('⚠️ Please select category and jurisdiction first');
+                return;
+            }
+            
+            alert('🤖 AI is generating a template based on your requirements...\n\nThis would connect to an AI service to generate appropriate clauses based on:\n- Category: ' + category + '\n- Jurisdiction: ' + jurisdiction);
+            
+            // Show the articles section
+            document.getElementById('articles-section').style.display = 'block';
+            
+            // Simulate AI generation with sample articles
+            setTimeout(() => {
+                const container = document.getElementById('articles-container');
+                container.innerHTML = ''; // Clear any existing articles
+                articleCount = 0;
+                
+                // Add sample AI-generated articles
+                addAIArticle('Scope of Services', 'This article defines the specific services to be provided under this agreement...', 'service_completed == true', 'release_payment()', 'hold_payment()');
+                addAIArticle('Payment Terms', 'Payment shall be made according to the following schedule and conditions...', 'milestone_reached == true', 'transfer_funds()', 'dispute_resolution()');
+                
+                alert('✅ AI Template generated! Review the suggested articles.');
+                // Scroll to articles section
+                document.getElementById('articles-section').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        function addAIArticle(title, description, condition, thenAction, elseAction) {
+            articleCount++;
+            const container = document.getElementById('articles-container');
+            const articleDiv = document.createElement('div');
+            articleDiv.className = 'article-item';
+            articleDiv.innerHTML = `
+                <div class="article-header">
+                    <span class="article-number">Article ${articleCount}</span>
+                    <button class="btn-danger" onclick="removeArticle(this)">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label>Article Title</label>
+                    <input type="text" class="article-title" value="${title}">
+                </div>
+                <div class="form-group">
+                    <label>Article Description</label>
+                    <textarea class="article-description" rows="4">${description}</textarea>
+                </div>
+                <div class="condition-block">
+                    <h5 style="margin-bottom: 10px;">Smart Contract Conditions</h5>
+                    <div>
+                        <span class="condition-tag">IF</span>
+                        <input type="text" style="width: calc(100% - 60px); margin-bottom: 10px;" value="${condition}">
+                    </div>
+                    <div>
+                        <span class="condition-tag">THEN</span>
+                        <input type="text" style="width: calc(100% - 60px); margin-bottom: 10px;" value="${thenAction}">
+                    </div>
+                    <div>
+                        <span class="condition-tag">ELSE</span>
+                        <input type="text" style="width: calc(100% - 60px);" value="${elseAction}">
+                    </div>
+                </div>
+            `;
+            container.appendChild(articleDiv);
+        }
+
+        function showCustomArticles() {
+            // Show the articles section
+            document.getElementById('articles-section').style.display = 'block';
+            
+            // Add just one empty article
+            addArticle();
+            
+            // Scroll to articles section
+            document.getElementById('articles-section').scrollIntoView({ behavior: 'smooth' });
+            
+            console.log('Custom articles section activated - added 1 article');
+        }
+
+        function validateContract() {
+            const errors = [];
+            
+            // Check required fields
+            if (!document.getElementById('contract-title').value) errors.push('Contract Title');
+            if (!document.getElementById('contract-date').value) errors.push('Effective Date');
+            if (!document.getElementById('contract-category').value) errors.push('Category');
+            if (!document.getElementById('jurisdiction').value) errors.push('Jurisdiction');
+            
+            // Check parties
+            const parties = document.querySelectorAll('.party-block');
+            if (parties.length < 2) errors.push('At least 2 parties required');
+            
+            // Check articles
+            const articles = document.querySelectorAll('.article-item');
+            if (articles.length === 0) errors.push('At least 1 article required');
+            
+            if (errors.length > 0) {
+                alert('⚠️ Validation Failed!\n\nMissing required fields:\n- ' + errors.join('\n- '));
+            } else {
+                alert('✅ Contract validation successful!\n\nThe contract is ready for deployment.');
+                // Update status badge
+                const badge = document.querySelector('.status-badge');
+                if (badge) {
+                    badge.className = 'status-badge status-ready';
+                    badge.textContent = 'READY';
+                }
+            }
+        }
+
+        function deployContract() {
+            if (!confirm('🚀 Are you ready to deploy this contract to ICP?\n\nThis action will create an immutable smart contract on the blockchain.')) {
+                return;
+            }
+            
+            const contractData = collectContractData();
+            console.log('Deploying contract:', contractData);
+            
+            alert('🔄 Deploying to Internet Computer Protocol...\n\nEstimated time: 30 seconds\nGas fee: 0.001 ICP');
+            
+            // Simulate deployment
+            setTimeout(() => {
+                const canisterId = 'ryjl3-tyaaa-aaaaa-aaaba-' + Math.random().toString(36).substr(2, 9);
+                alert('✅ Contract Successfully Deployed!\n\nCanister ID: ' + canisterId + '\n\nYour smart contract is now live on ICP!');
+            }, 3000);
+        }
+
+        function collectContractData() {
+            const data = {
+                summary: {
+                    title: document.getElementById('contract-title').value,
+                    date: document.getElementById('contract-date').value,
+                    version: document.getElementById('contract-version').value,
+                    category: document.getElementById('contract-category').value,
+                    jurisdiction: document.getElementById('jurisdiction').value,
+                    subject: document.getElementById('contract-subject').value,
+                    preamble: document.getElementById('contract-preamble').value
+                },
+                parties: [],
+                articles: [],
+                appendices: []
+            };
+            
+            // Collect parties
+            document.querySelectorAll('.party-block').forEach(party => {
+                data.parties.push({
+                    name: party.querySelector('.party-name').value,
+                    alias: party.querySelector('.party-alias').value,
+                    address: party.querySelector('.party-address').value,
+                    email: party.querySelector('.party-email').value,
+                    wallet: party.querySelector('.party-wallet').value
+                });
+            });
+            
+            // Collect articles
+            document.querySelectorAll('.article-item').forEach(article => {
+                data.articles.push({
+                    title: article.querySelector('.article-title').value,
+                    description: article.querySelector('.article-description').value
+                });
+            });
+            
+            return data;
+        }
+
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+            const settingName = element.parentElement.querySelector('span').textContent;
+            const isActive = element.classList.contains('active');
+            console.log(`${settingName} is now ${isActive ? 'ON' : 'OFF'}`);
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            alert('✅ Form submitted successfully!');
+            console.log('Form data:', new FormData(event.target));
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Smart Contract Management System initialized');
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('contract-date');
+            if (dateInput) {
+                dateInput.value = today;
+            }
+            
+            // Initialize dashboard view as default and render contracts
+            showView('dashboard');
+            renderContracts();
+            
+            // Initialize signature boxes for existing parties
+            updateSignatureBoxes();
+            
+            // Add event listeners to update signature boxes when party aliases change
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('party-alias') || e.target.classList.contains('party-name')) {
+                    updateSignatureBoxes();
+                }
+            });
+        });
+    </script>
+</body>
 </html>

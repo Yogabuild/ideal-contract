@@ -1,0 +1,22 @@
+# Check ledger balance on main net :
+dfx ledger --network ic balance
+
+# Fund the ledger 
+
+## Get your ledger Account ID
+dfx ledger account-id
+
+## Once ICP transferred to ledger, convert them to cycles
+dfx cycles convert --amount 1 --network ic
+
+## Check Cycles balance on main net for my principal
+dfx cycles balance --network ic
+
+
+
+
+
+
+
+dfx cycles convert --amount=0.123 --network ic
+dfx canister create ideal-contract-frontend --network ic
