@@ -1,4 +1,4 @@
-# `ideal-contract`
+# `IDeal-contract`
 
 Strategic vision and project design - Work in progress
 
